@@ -72,5 +72,23 @@ class Date (db.Model):
             366
         """
 
-        # TODO
-        ...
+        # This maps the months to their respective first day of the year
+        month_to_first_day_of_year = {
+            1: 1,
+            2: 32,
+            3: 61,
+            4: 92,
+            5: 122,
+            6: 153,
+            7: 183,
+            8: 214,
+            9: 245,
+            10: 275,
+            11: 306,
+            12: 336,
+        }
+
+        # Subtract 1 since days are 1-indexed
+        day_of_year = month_to_first_day_of_year[month] + day - 1
+
+        return day_of_year

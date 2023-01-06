@@ -53,3 +53,129 @@ class DateModelTestCase(TestCase):
             .one()
             .day_of_year, 60
         )
+
+    def test_date_to_day_of_year(self):
+        """ Test to check correct day of year is given from class method
+            date_from_day_of_year
+        """
+
+        day_of_year = Date.date_to_day_of_year(1, 1)
+        self.assertEqual(day_of_year, 1)
+
+        day_of_year = Date.date_to_day_of_year(2, 28)
+        self.assertEqual(day_of_year, 59)
+
+        day_of_year = Date.date_to_day_of_year(2, 29)
+        self.assertEqual(day_of_year, 60)
+
+        day_of_year = Date.date_to_day_of_year(3, 1)
+        self.assertEqual(day_of_year, 61)
+
+        day_of_year = Date.date_to_day_of_year(12, 31)
+        self.assertEqual(day_of_year, 366)
+
+    def test_invalid_type_date_to_day_of_year(self):
+        """ Test to check correct error response is given when invalid data type
+            is used as input
+        """
+
+        with self.assertRaises(TypeError) as cm:
+            Date.date_to_day_of_year(1.1, 1)
+
+        self.assertTrue(isinstance(cm.exception, TypeError))
+        self.assertEqual("Invalid data types", str(cm.exception))
+
+        with self.assertRaises(TypeError) as cm:
+            Date.date_to_day_of_year(1, 'a')
+
+        self.assertTrue(isinstance(cm.exception, TypeError))
+        self.assertEqual("Invalid data types", str(cm.exception))
+
+    def test_out_of_range_input_date_to_day_of_year(self):
+        """ Test to check correct error response is given when out of range data
+            is used as input
+        """
+        with self.assertRaises(ValueError) as cm:
+            Date.date_to_day_of_year(13, 1)
+
+        self.assertTrue(isinstance(cm.exception, ValueError))
+        self.assertEqual("13 is an invalid month", str(cm.exception))
+
+
+        with self.assertRaises(ValueError) as cm:
+            Date.date_to_day_of_year(-1, 1)
+
+        self.assertTrue(isinstance(cm.exception, ValueError))
+        self.assertEqual("-1 is an invalid month", str(cm.exception))
+
+        with self.assertRaises(ValueError) as cm:
+            Date.date_to_day_of_year(1, 0)
+
+        self.assertTrue(isinstance(cm.exception, ValueError))
+        self.assertEqual("0 is an invalid day", str(cm.exception))
+
+        with self.assertRaises(ValueError) as cm:
+            Date.date_to_day_of_year(1, 40)
+
+        self.assertTrue(isinstance(cm.exception, ValueError))
+        self.assertEqual("40 is an invalid day", str(cm.exception))
+
+    def test_get_date_from_day_of_year(self):
+        """ Test to check correct month and day is given from class method
+            date_from_day_of_year
+        """
+        ( month, day ) = Date.date_from_day_of_year(10)
+        self.assertEqual(month, 1)
+        self.assertEqual(day, 10)
+
+        ( month, day ) = Date.date_from_day_of_year(4)
+        self.assertEqual(month, 1)
+        self.assertEqual(day, 4)
+
+        ( month, day ) = Date.date_from_day_of_year(61)
+        self.assertEqual(month, 3)
+        self.assertEqual(day, 1)
+
+        ( month, day ) = Date.date_from_day_of_year(366)
+        self.assertEqual(month, 12)
+        self.assertEqual(day, 31)
+
+        ( month, day ) = Date.date_from_day_of_year(60)
+        self.assertEqual(month, 2)
+        self.assertEqual(day, 29)
+
+    def test_invalid_type_date_from_day_of_year(self):
+        """ Test to check correct error response is given when invalid data type
+            is used as input
+        """
+
+        with self.assertRaises(TypeError) as cm:
+            Date.date_from_day_of_year('a')
+
+        self.assertTrue(isinstance(cm.exception, TypeError))
+        self.assertEqual("Invalid data type", str(cm.exception))
+
+        with self.assertRaises(TypeError) as cm:
+            Date.date_from_day_of_year(123123.2353)
+
+        self.assertTrue(isinstance(cm.exception, TypeError))
+        self.assertEqual("Invalid data type", str(cm.exception))
+
+    def test_out_of_range_data_date_from_day_of_year(self):
+        """ Test to check correct error response is given when out of range data
+            is used as input
+        """
+
+        with self.assertRaises(ValueError) as cm:
+            Date.date_from_day_of_year(0)
+
+        self.assertTrue(isinstance(cm.exception, ValueError))
+        self.assertEqual("""0 is out of range, does not exists
+                in current calendar""", str(cm.exception))
+
+        with self.assertRaises(ValueError) as cm:
+            Date.date_from_day_of_year(367)
+
+        self.assertTrue(isinstance(cm.exception, ValueError))
+        self.assertEqual("""367 is out of range, does not exists
+                in current calendar""", str(cm.exception))

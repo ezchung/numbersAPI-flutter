@@ -54,23 +54,25 @@ class Date (db.Model):
     @classmethod
     def date_to_day_of_year(cls, month, day):
         """
-        Converts month and day to day of the year (1-366)
+        Converts month (int) and day (int) to day of the year (1-366) (int)
 
-            >>> Date.date_to_day_of_year(1, 1)
-            1
-
-            >>> Date.date_to_day_of_year(2, 28)
-            59
-
-            >>> Date.date_to_day_of_year(2, 29)
-            60
-
-            >>> Date.date_to_day_of_year(3, 1)
-            61
-
-            >>> Date.date_to_day_of_year(12, 31)
-            366
+        Returns day of the year.
         """
+        # This maps valid days for each month
+        valid_days_for_months = {
+            1: 31,
+            2: 29,
+            3: 31,
+            4: 30,
+            5: 31,
+            6: 30,
+            7: 31,
+            8: 31,
+            9: 30,
+            10: 31,
+            11: 30,
+            12: 31,
+        }
 
         # This maps the months to their respective first day of the year
         month_to_first_day_of_year = {
@@ -88,7 +90,62 @@ class Date (db.Model):
             12: 336,
         }
 
+        if not(isinstance(month, int) and isinstance(day, int)):
+            raise TypeError("Invalid data types")
+
+        if not valid_days_for_months.get(month, None):
+            raise ValueError(f"{month} is an invalid month")
+
+        if day > valid_days_for_months[month] or day < 1:
+            raise ValueError(f"{day} is an invalid day")
+
         # Subtract 1 since days are 1-indexed
         day_of_year = month_to_first_day_of_year[month] + day - 1
 
         return day_of_year
+
+    @classmethod
+    def date_from_day_of_year(cls, day_of_year):
+        """
+            Converts day_of_year (int) to (month:int, day:int).
+
+            Returns (month:int, day:int)
+        """
+
+        day_of_year_to_month = {
+            1: 1,
+            32: 2,
+            61: 3,
+            92: 4,
+            122: 5,
+            153: 6,
+            183: 7,
+            214: 8,
+            245: 9,
+            275: 10,
+            306: 11,
+            336: 12,
+        }
+
+        if not isinstance(day_of_year, int):
+            raise TypeError("Invalid data type")
+
+        if day_of_year < 1 or day_of_year > 366:
+            raise ValueError(
+                f"""{day_of_year} is out of range, does not exists
+                in current calendar""")
+
+        first_of_each_month = list(day_of_year_to_month.keys())
+
+        for index, first in enumerate(first_of_each_month):
+            month = day_of_year_to_month[first]
+            day = day_of_year + 1 - first_of_each_month[index]
+
+            if day_of_year is first:
+                return (month, 1)
+            if index is len(day_of_year_to_month) - 1:
+                return (month, day)
+            if day_of_year > first and day_of_year < first_of_each_month[index+1]:
+                return (month, day)
+
+        raise Exception("Should not get here - encountered unexpected error.")

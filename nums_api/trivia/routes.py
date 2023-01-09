@@ -20,12 +20,12 @@ def get_trivia_fact(number):
             }
         }
 
-        OR If number is not found... 
+        OR If number is not found...
         Output: JSON like
         {
-            error: { 
+            error: {
                     "message": f"A trivia fact for { number } not found",
-                    "status": 404 
+                    "status": 404
                     }
         }
     """

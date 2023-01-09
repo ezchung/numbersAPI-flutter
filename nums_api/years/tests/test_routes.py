@@ -2,6 +2,7 @@ from unittest import TestCase
 from nums_api import app
 from nums_api.database import db, connect_db
 from nums_api.config import DATABASE_URL_TEST
+from nums_api.years.models import Year
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL_TEST
 app.config["TESTING"] = True
@@ -13,16 +14,97 @@ connect_db(app)
 db.drop_all()
 db.create_all()
 
-class YearRouteTestCase(TestCase):
+
+class YearBaseRouteTestCase(TestCase):
+    """
+        Houses setup functionality.
+        Should be subclassed for any year route classes utilized
+    """
     def setUp(self):
         """Set up test data here"""
+        Year.query.delete()
+
+        y1 = Year(
+            year=2019,
+            fact_fragment="is the year COVID was detected",
+            fact_statement="2019 is the year COVID was first detected.",
+            was_submitted=False
+        )
+
+        db.session.add(y1)
+        db.session.commit()
+
         self.client = app.test_client()
+
 
     def tearDown(self):
         """Clean up any fouled transaction."""
         db.session.rollback()
 
+
+class YearRouteTestCase(YearBaseRouteTestCase):
+
     def test_setup(self):
         """Test to make sure tests are set up correctly"""
         test_setup_correct = True
         self.assertEqual(test_setup_correct, True)
+
+    def test_get_year_fact(self):
+        with self.client as c:
+
+            resp = c.get("/api/years/2019")
+            expected_resp = {
+                "fact": {
+                    "fragment": "is the year COVID was detected",
+                    "statement": "2019 is the year COVID was first detected.",
+                    "year": 2019,
+                    "type": "year"
+                }
+            }
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(resp.json, expected_resp)
+
+    def test_get_year_fact_not_found(self):
+        with self.client as c:
+
+            resp = c.get("/api/years/2200")
+            expected_resp = {
+                "error": {
+                    "message": "A fact for 2200 not found",
+                    "status": 404
+                }
+            }
+
+            self.assertEqual(resp.status_code, 404)
+            self.assertEqual(resp.json, expected_resp)
+
+    def test_get_year_fact_not_valid_number(self):
+        with self.client as c:
+
+            resp = c.get("/api/years/asdf")
+
+            self.assertEqual(resp.status_code, 404)
+
+    def test_get_random_year_fact(self):
+        with self.client as c:
+
+            resp = c.get("/api/years/random")
+            expected_resp = {
+                "fact": {
+                    "fragment": "is the year COVID was detected",
+                    "statement": "2019 is the year COVID was first detected.",
+                    "year": 2019,
+                    "type": "year"
+                }
+            }
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(resp.json, expected_resp)
+
+
+
+
+
+
+

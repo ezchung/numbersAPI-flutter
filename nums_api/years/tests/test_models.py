@@ -71,7 +71,7 @@ class YearModelTestCase(TestCase):
             db.session.add(self.y2)
             db.session.commit()
 
-        db.session.rollback()
+            db.session.rollback()
 
-        year_obj = Year.query.all()
-        self.assertEqual(len(year_obj), 0)
+            year_obj = Year.query.all()
+            self.assertEqual(len(year_obj), 0)

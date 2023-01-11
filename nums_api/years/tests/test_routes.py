@@ -2,8 +2,9 @@ from unittest import TestCase
 from nums_api import app
 from nums_api.database import db, connect_db
 from nums_api.config import DATABASE_URL_TEST
-from nums_api.years.models import Year
+from nums_api.years.models import Year, YearLikeCounter
 from nums_api.__init__ import limiter
+
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL_TEST
 app.config["TESTING"] = True
@@ -24,16 +25,18 @@ class YearBaseRouteTestCase(TestCase):
 
     def setUp(self):
         """Set up test data here"""
+
+        YearLikeCounter.query.delete()
         Year.query.delete()
 
-        y1 = Year(
+        self.y1 = Year(
             year=2019,
             fact_fragment="is the year COVID was detected",
             fact_statement="2019 is the year COVID was first detected.",
             was_submitted=False
         )
 
-        db.session.add(y1)
+        db.session.add(self.y1)
         db.session.commit()
 
         self.client = app.test_client()
@@ -104,3 +107,26 @@ class YearRouteTestCase(YearBaseRouteTestCase):
 
             self.assertEqual(resp.status_code, 200)
             self.assertEqual(resp.json, expected_resp)
+
+    def test_add_year_like(self):
+        """Test the like route."""
+        with self.client as c:
+
+            resp = c.post(f"api/years/like/{self.y1.id}")
+            self.assertEqual(resp.status_code, 200)
+
+            yl1 = YearLikeCounter.query.filter_by(year_id=self.y1.id).one()
+            self.assertEqual(yl1.num_likes, 1)
+
+            resp = c.post(f"api/years/like/{self.y1.id}")
+            self.assertEqual(resp.status_code, 200)
+
+            yl1 = YearLikeCounter.query.filter_by(year_id=self.y1.id).one()
+            self.assertEqual(yl1.num_likes, 2)
+
+    def test_add_year_like_fail(self):
+        """Test like route failure."""
+        with self.client as c:
+
+            resp = c.post(f"api/years/like/{-1}")
+            self.assertEqual(resp.status_code, 404)

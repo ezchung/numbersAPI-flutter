@@ -2,7 +2,7 @@ from unittest import TestCase
 from nums_api import app
 from nums_api.database import db, connect_db
 from nums_api.config import DATABASE_URL_TEST
-from nums_api.maths.models import Math
+from nums_api.maths.models import Math,MathLikeCounter
 from nums_api.__init__ import limiter
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL_TEST
@@ -24,24 +24,25 @@ class MathBaseRouteTestCase(TestCase):
 
     def setUp(self):
         """Set up test data here"""
-
+        
+        MathLikeCounter.query.delete()
         Math.query.delete()
 
-        m1 = Math(
+        self.m1 = Math(
             number=1,
             fact_fragment="the number for this m1 test fact fragment",
             fact_statement="1 is the number for this m1 test fact statement.",
             was_submitted=False,
         )
 
-        m2 = Math(
+        self.m2 = Math(
             number=2.22,
             fact_fragment="the number for this m2 test fact fragment",
             fact_statement="2.22 is the number for this m2 test fact statement.",
             was_submitted=False,
         )
 
-        db.session.add_all([m1, m2])
+        db.session.add_all([self.m1, self.m2])
         db.session.commit()
 
         self.client = app.test_client()
@@ -141,3 +142,26 @@ class MathRouteTestCase(MathBaseRouteTestCase):
 
             self.assertEqual(resp.status_code, 200)
             self.assertIn(resp.json, [possible_resp_1, possible_resp_2])
+
+    def test_add_math_like(self):
+        """Test the like route."""
+        with self.client as c:
+
+            resp = c.post(f"api/math/like/{self.m1.id}")
+            self.assertEqual(resp.status_code, 200)
+
+            ml1 = MathLikeCounter.query.filter_by(math_id=self.m1.id).one()
+            self.assertEqual(ml1.num_likes, 1)
+
+            resp = c.post(f"api/math/like/{self.m1.id}")
+            self.assertEqual(resp.status_code, 200)
+
+            ml1 = MathLikeCounter.query.filter_by(math_id=self.m1.id).one()
+            self.assertEqual(ml1.num_likes, 2)
+
+    def test_add_math_like_fail(self):
+        """Test like route failure."""
+        with self.client as c:
+
+            resp = c.post(f"api/math/like/{-1}")
+            self.assertEqual(resp.status_code, 404)

@@ -2,7 +2,7 @@ from unittest import TestCase
 from nums_api import app
 from nums_api.database import db, connect_db
 from nums_api.config import DATABASE_URL_TEST
-from nums_api.dates.models import Date
+from nums_api.dates.models import Date, DateLikeCounter
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL_TEST
 app.config["TESTING"] = True
@@ -14,10 +14,12 @@ connect_db(app)
 db.drop_all()
 db.create_all()
 
+
 class DateModelTestCase(TestCase):
     def setUp(self):
         """Set up test data here"""
 
+        DateLikeCounter.query.delete()
         Date.query.delete()
 
         self.d1 = Date(
@@ -101,7 +103,6 @@ class DateModelTestCase(TestCase):
         self.assertTrue(isinstance(cm.exception, ValueError))
         self.assertEqual("13 is an invalid month", str(cm.exception))
 
-
         with self.assertRaises(ValueError) as cm:
             Date.date_to_day_of_year(-1, 1)
 
@@ -124,23 +125,23 @@ class DateModelTestCase(TestCase):
         """ Test to check correct month and day is given from class method
             date_from_day_of_year
         """
-        ( month, day ) = Date.date_from_day_of_year(10)
+        (month, day) = Date.date_from_day_of_year(10)
         self.assertEqual(month, 1)
         self.assertEqual(day, 10)
 
-        ( month, day ) = Date.date_from_day_of_year(4)
+        (month, day) = Date.date_from_day_of_year(4)
         self.assertEqual(month, 1)
         self.assertEqual(day, 4)
 
-        ( month, day ) = Date.date_from_day_of_year(61)
+        (month, day) = Date.date_from_day_of_year(61)
         self.assertEqual(month, 3)
         self.assertEqual(day, 1)
 
-        ( month, day ) = Date.date_from_day_of_year(366)
+        (month, day) = Date.date_from_day_of_year(366)
         self.assertEqual(month, 12)
         self.assertEqual(day, 31)
 
-        ( month, day ) = Date.date_from_day_of_year(60)
+        (month, day) = Date.date_from_day_of_year(60)
         self.assertEqual(month, 2)
         self.assertEqual(day, 29)
 
@@ -179,3 +180,30 @@ class DateModelTestCase(TestCase):
         self.assertTrue(isinstance(cm.exception, ValueError))
         self.assertEqual("""367 is out of range, does not exists
                 in current calendar""", str(cm.exception))
+
+    def test_add_likes(self):
+        """Makes sure the like feature works"""
+
+        db.session.add(self.d1)
+        db.session.commit()
+
+        l1 = DateLikeCounter(date_id=self.d1.id)
+
+        db.session.add(l1)
+
+        db.session.commit()
+
+        num_likes = self.d1.like_counter.num_likes
+        self.assertEqual(num_likes, 0)
+
+        self.d1.like_counter.increment_likes()
+        db.session.commit()
+
+        num_likes = self.d1.like_counter.num_likes
+        self.assertEqual(num_likes, 1)
+
+        self.d1.like_counter.increment_likes()
+        db.session.commit()
+
+        num_likes = self.d1.like_counter.num_likes
+        self.assertEqual(num_likes, 2)

@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify
-from nums_api.dates.models import Date
+from nums_api.dates.models import Date, DateLikeCounter
 import random
 from werkzeug.exceptions import BadRequest
+from nums_api.database import db
 
 dates = Blueprint("dates", __name__)
 
@@ -98,3 +99,42 @@ def get_date_fact_random():
     }
 
     return jsonify(fact=fact_data)
+
+
+@dates.post("/like/<int:id>")
+def add_date_like(id):
+    """
+    Post like a date fact
+        Input: id (int)
+        Output: "You have liked this fact."
+
+        OR If date with id is not found...
+        Output: JSON like
+        {
+            error: {
+                    "message": f"A date fact for id { id } not found",
+                    "status": 404
+                    }
+        }
+    """
+
+    fact = Date.query.get(id)
+
+    if not fact:
+        error = {
+            "message": f"A date fact for id { id } not found",
+            "status": 404
+        }
+        return (jsonify(error), 404)
+
+    like_counter = DateLikeCounter.query.filter_by(date_id=fact.id).first()
+
+    if not like_counter:
+        like_counter = DateLikeCounter(date_id=id)
+        db.session.add(like_counter)
+        db.session.commit()
+
+    like_counter.increment_likes()
+    db.session.commit()
+
+    return ("You have liked this fact.", 200)

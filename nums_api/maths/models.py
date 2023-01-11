@@ -42,3 +42,36 @@ class Math(db.Model):
         db.Boolean,
         nullable=False,
     )
+
+
+class MathLikeCounter(db.Model):
+    """Keeps track of amount of likes per fact"""
+
+    __tablename__ = "math_like_counters"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        autoincrement=True
+    )
+
+    math_id = db.Column(
+        db.Integer,
+        db.ForeignKey("math.id"),
+        unique=True,
+        nullable=False
+    )
+
+    num_likes = db.Column(
+        db.Integer,
+        nullable=False,
+        default=0
+    )
+
+    math = db.relationship(
+        "Math", 
+        backref=db.backref("like_counter", uselist=False)
+    )
+
+    def increment_likes(self):
+        self.num_likes += 1

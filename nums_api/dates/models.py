@@ -149,3 +149,36 @@ class Date (db.Model):
                 return (month, day)
 
         raise Exception("Should not get here - encountered unexpected error.")
+
+
+class DateLikeCounter(db.Model):
+    """Keeps track of amount of likes per fact"""
+
+    __tablename__ = "date_like_counters"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        autoincrement=True
+    )
+
+    date_id = db.Column(
+        db.Integer,
+        db.ForeignKey("dates.id"),
+        unique=True,
+        nullable=False
+    )
+
+    num_likes = db.Column(
+        db.Integer,
+        nullable=False,
+        default=0
+    )
+
+    date = db.relationship(
+        "Date",
+        backref=db.backref("like_counter", uselist=False)
+    )
+
+    def increment_likes(self):
+        self.num_likes += 1

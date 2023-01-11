@@ -2,7 +2,7 @@ from unittest import TestCase
 from nums_api import app
 from nums_api.database import db, connect_db
 from nums_api.config import DATABASE_URL_TEST
-from nums_api.years.models import Year
+from nums_api.years.models import Year, YearLikeCounter
 from sqlalchemy.exc import DataError
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL_TEST
@@ -15,10 +15,12 @@ connect_db(app)
 db.drop_all()
 db.create_all()
 
+
 class YearModelTestCase(TestCase):
     def setUp(self):
         """Set up test data here"""
 
+        YearLikeCounter.query.delete()
         Year.query.delete()
 
         self.y1 = Year(
@@ -75,3 +77,23 @@ class YearModelTestCase(TestCase):
 
             year_obj = Year.query.all()
             self.assertEqual(len(year_obj), 0)
+
+    def test_add_likes(self):
+        """Makes sure the like feature works"""
+
+        db.session.add(self.y1)
+        db.session.commit()
+
+        l1 = YearLikeCounter(year_id=self.y1.id)
+
+        db.session.add(l1)
+        db.session.commit()
+
+        num_likes = self.y1.like_counter.num_likes
+        self.assertEqual(num_likes, 0)
+
+        self.y1.like_counter.increment_likes()
+        db.session.commit()
+
+        num_likes = self.y1.like_counter.num_likes
+        self.assertEqual(num_likes, 1)

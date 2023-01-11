@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
-from nums_api.years.models import Year
+from nums_api.years.models import Year, YearLikeCounter
 import random
+from nums_api.database import db
 
 years = Blueprint("years", __name__)
 
@@ -49,6 +50,7 @@ def get_year_facts(year):
 
     return jsonify(fact=fact_data)
 
+
 @years.get("/random")
 def get_year_facts_random():
     """
@@ -74,3 +76,42 @@ def get_year_facts_random():
     }
 
     return jsonify(fact=fact_data)
+
+
+@years.post("/like/<int:id>")
+def add_year_like(id):
+    """
+    Post like a year fact
+        Input: id (int)
+        Output: "You have liked this fact."
+
+        OR If number with id is not found...
+        Output: JSON like
+        {
+            error: {
+                    "message": f"A year fact for id { id } not found",
+                    "status": 404
+                    }
+        }
+    """
+
+    fact = Year.query.get(id)
+
+    if not fact:
+        error = {
+            "message": f"A year fact for id { id } not found",
+            "status": 404
+        }
+        return (jsonify(error), 404)
+
+    like_counter = YearLikeCounter.query.filter_by(year_id=fact.id).first()
+
+    if not like_counter:
+        like_counter = YearLikeCounter(year_id=id)
+        db.session.add(like_counter)
+        db.session.commit()
+
+    like_counter.increment_likes()
+    db.session.commit()
+
+    return ("You have liked this fact.", 200)

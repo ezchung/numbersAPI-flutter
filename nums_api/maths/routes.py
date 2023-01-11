@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify
-from nums_api.maths.models import Math
+from nums_api.maths.models import Math,MathLikeCounter
 import random
 from werkzeug.exceptions import BadRequest
+from nums_api.database import db
+
 
 math = Blueprint("math", __name__)
 
@@ -84,3 +86,42 @@ def get_math_fact_random():
     }
 
     return jsonify(fact=fact_data)
+
+
+@math.post("/like/<int:id>")
+def add_math_like(id):
+    """
+    Post like a math fact
+        Input: id (int)
+        Output: "You have liked this fact."
+
+        OR If number with id is not found...
+        Output: JSON like
+        {
+            error: {
+                    "message": f"A math fact for id { id } not found",
+                    "status": 404
+                    }
+        }
+    """
+
+    fact = Math.query.get(id)
+
+    if not fact:
+        error = {
+            "message": f"A math fact for id { id } not found",
+            "status": 404
+        }
+        return (jsonify(error), 404)
+
+    like_counter = MathLikeCounter.query.filter_by(math_id=fact.id).first()
+
+    if not like_counter:
+        like_counter = MathLikeCounter(math_id=id)
+        db.session.add(like_counter)
+        db.session.commit()
+
+    like_counter.increment_likes()
+    db.session.commit()
+
+    return ("You have liked this fact.", 200)

@@ -2,7 +2,7 @@ from unittest import TestCase
 from nums_api import app
 from nums_api.database import db, connect_db
 from nums_api.config import DATABASE_URL_TEST
-from nums_api.dates.models import Date
+from nums_api.dates.models import Date, DateLikeCounter
 from nums_api.__init__ import limiter
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL_TEST
@@ -24,9 +24,11 @@ class DateBaseRouteTestCase(TestCase):
 
     def setUp(self):
         """Set up test data here"""
+
+        DateLikeCounter.query.delete()
         Date.query.delete()
 
-        d1 = Date(
+        self.d1 = Date(
             day_of_year=1,
             year=2023,
             fact_fragment="the test case",
@@ -34,7 +36,7 @@ class DateBaseRouteTestCase(TestCase):
             was_submitted=True,
         )
 
-        db.session.add(d1)
+        db.session.add(self.d1)
         db.session.commit()
 
         self.client = app.test_client()
@@ -127,3 +129,26 @@ class DateRouteTestCase(DateBaseRouteTestCase):
 
             self.assertEqual(resp.status_code, 400)
             self.assertIn("33 is an invalid day", html)
+
+    def test_add_date_like(self):
+        """Test the like route."""
+        with self.client as c:
+
+            resp = c.post(f"api/dates/like/{self.d1.id}")
+            self.assertEqual(resp.status_code, 200)
+
+            dl1 = DateLikeCounter.query.filter_by(date_id=self.d1.id).one()
+            self.assertEqual(dl1.num_likes, 1)
+
+            resp = c.post(f"api/dates/like/{self.d1.id}")
+            self.assertEqual(resp.status_code, 200)
+
+            dl1 = DateLikeCounter.query.filter_by(date_id=self.d1.id).one()
+            self.assertEqual(dl1.num_likes, 2)
+
+    def test_add_date_like_fail(self):
+        """Test like route failure."""
+        with self.client as c:
+
+            resp = c.post(f"api/dates/like/{-1}")
+            self.assertEqual(resp.status_code, 404)

@@ -3,6 +3,7 @@ from nums_api import app
 from nums_api.database import db, connect_db
 from nums_api.config import DATABASE_URL_TEST
 from nums_api.dates.models import Date
+from nums_api.__init__ import limiter
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL_TEST
 app.config["TESTING"] = True
@@ -13,6 +14,7 @@ connect_db(app)
 
 db.drop_all()
 db.create_all()
+
 
 class DateBaseRouteTestCase(TestCase):
     """
@@ -37,6 +39,9 @@ class DateBaseRouteTestCase(TestCase):
 
         self.client = app.test_client()
 
+        # disable API rate limits for tests
+        limiter.enabled = False
+
     def tearDown(self):
         """Clean up any fouled transaction."""
         db.session.rollback()
@@ -58,7 +63,7 @@ class DateRouteTestCase(DateBaseRouteTestCase):
                     "fragment": "the test case",
                     "statement": "January 1st is the test case.",
                     "month": 1,
-                    "day" : 1,
+                    "day": 1,
                     "year": 2023,
                     "type": "date"
                 }
@@ -99,7 +104,7 @@ class DateRouteTestCase(DateBaseRouteTestCase):
                     "fragment": "the test case",
                     "statement": "January 1st is the test case.",
                     "month": 1,
-                    "day" : 1,
+                    "day": 1,
                     "year": 2023,
                     "type": "date"
                 }

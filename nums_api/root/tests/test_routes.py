@@ -1,5 +1,4 @@
 from unittest import TestCase
-
 from nums_api import app
 
 # Make Flask errors be real errors, not HTML pages with error info

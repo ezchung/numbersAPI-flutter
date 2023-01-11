@@ -3,6 +3,7 @@ from nums_api import app
 from nums_api.database import db, connect_db
 from nums_api.trivia.models import Trivia
 from nums_api.config import DATABASE_URL_TEST
+from nums_api.__init__ import limiter
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL_TEST
 app.config["TESTING"] = True
@@ -36,6 +37,9 @@ class TriviaBaseRouteTestCase(TestCase):
         db.session.commit()
 
         self.client = app.test_client()
+
+        # disable API rate limits for tests
+        limiter.enabled = False
 
     def tearDown(self):
         """Clean up any fouled transaction."""

@@ -3,6 +3,7 @@ from nums_api import app
 from nums_api.database import db, connect_db
 from nums_api.config import DATABASE_URL_TEST
 from nums_api.years.models import Year
+from nums_api.__init__ import limiter
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL_TEST
 app.config["TESTING"] = True
@@ -20,6 +21,7 @@ class YearBaseRouteTestCase(TestCase):
         Houses setup functionality.
         Should be subclassed for any year route classes utilized
     """
+
     def setUp(self):
         """Set up test data here"""
         Year.query.delete()
@@ -36,6 +38,8 @@ class YearBaseRouteTestCase(TestCase):
 
         self.client = app.test_client()
 
+        # disable API rate limits for tests
+        limiter.enabled = False
 
     def tearDown(self):
         """Clean up any fouled transaction."""
@@ -51,7 +55,6 @@ class YearRouteTestCase(YearBaseRouteTestCase):
 
     def test_get_year_fact(self):
         with self.client as c:
-
             resp = c.get("/api/years/2019")
             expected_resp = {
                 "fact": {
@@ -101,10 +104,3 @@ class YearRouteTestCase(YearBaseRouteTestCase):
 
             self.assertEqual(resp.status_code, 200)
             self.assertEqual(resp.json, expected_resp)
-
-
-
-
-
-
-

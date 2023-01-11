@@ -4,7 +4,6 @@ import random
 
 years = Blueprint("years", __name__)
 
-
 @years.get("/<int:year>")
 def get_year_facts(year):
     """
@@ -64,7 +63,6 @@ def get_year_facts_random():
             }
         }
     """
-
     year_facts = Year.query.all()
     fact = random.choice(year_facts)
 

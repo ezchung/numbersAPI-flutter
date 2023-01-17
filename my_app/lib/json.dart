@@ -4,7 +4,12 @@
 
 import 'dart:convert';
 
-Welcome welcomeFromJson(String str) => Welcome.fromJson(json.decode(str));
+// Welcome welcomeFromJson(String str) => Welcome.fromJson(json.decode(str));
+
+Welcome welcomeFromJson(String jsonString) {
+  final jsonData = json.decode(jsonString);
+  return Welcome.fromJson(jsonData);
+}
 
 String welcomeToJson(Welcome data) => json.encode(data!.toJson());
 

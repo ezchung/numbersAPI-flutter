@@ -18,7 +18,7 @@ class Welcome {
         required this.fact,
     });
 
-    Fact fact;
+    Fact? fact;
 
     factory Welcome.fromJson(Map<String, dynamic> json) {
       print("In json");
@@ -35,16 +35,16 @@ class Welcome {
 
 class Fact {
     Fact({
-        required this.fragment,
-        required this.number,
-        required this.statement,
-        required this.type,
+        this.fragment,
+        this.number,
+        this.statement,
+        this.type,
     });
 
-    String fragment;
-    int number;
-    String statement;
-    String type;
+    String? fragment;
+    int? number;
+    String? statement;
+    String? type;
 
     factory Fact.fromJson(Map<String, dynamic> json) => Fact(
         fragment: json["fragment"],

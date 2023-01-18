@@ -58,6 +58,8 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
+    // var APIState = APIWidget.of(context);
+
     // var facts = appState.facts;
     // print('TEST');
     // print('facts');
@@ -75,16 +77,6 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CarouselWithIndicatorDemo(),
-            BigCard(pair: pair),
-            // Text(currFact.fact!.statement)
-            SizedBox(height: 5),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     appState.getFactAPI();
-            //   },
-            //   child: Text('Get Fact'),
-            // ),
             APIWidget(),
           ],
         ),
@@ -95,6 +87,10 @@ class MyHomePage extends StatelessWidget {
 
 class APIWidget extends StatefulWidget {
   const APIWidget({super.key});
+
+  // static of(BuildContext context, {bool root = false}) => root
+  //     ? context.findRootAncestorStateOfType<APIWidgetState>()
+  //     : context.findAncestorStateOfType<APIWidgetState>();
 
   @override
   State<APIWidget> createState() => APIWidgetState();
@@ -108,14 +104,27 @@ class APIWidgetState extends State<APIWidget> {
   void initState() {
     super.initState();
     print('init state ran');
-    getFactAPI();
+    getInitFactAPI();
     print('INIT FACTS');
     print(facts);
   }
 
+  void getInitFactAPI() async {
+    fact = (await ApiService().getFact('/math/5'));
+    facts.add(fact?.statement);
+    fact = (await ApiService().getFact('/trivia/42'));
+    facts.add(fact?.statement);
+    fact = (await ApiService().getFact('/years/2019'));
+    facts.add(fact?.statement);
+
+    setState(() {
+      facts = facts;
+    });
+  }
+
   void getFactAPI() async {
     print('inside Getfact');
-    fact = (await ApiService().getFact());
+    fact = (await ApiService().getFact('/trivia/random'));
     facts.add(fact?.statement);
 
     setState(() {
@@ -133,6 +142,15 @@ class APIWidgetState extends State<APIWidget> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center ,
       children: [
+        CarouselWithIndicatorDemo(facts:facts),
+            // Text(currFact.fact!.statement)
+        SizedBox(height: 5),
+        ElevatedButton(
+              onPressed: () {
+                getFactAPI();
+              },
+              child: Text('Get Fact'),
+            ),
         SizedBox(
           height: 500,
           child: ListView(
@@ -278,10 +296,15 @@ class BigCard extends StatelessWidget {
 
 // // ################# Carousel ############################
 class CarouselWithIndicatorDemo extends StatefulWidget {
+  final List<String?> facts;
+
+  const CarouselWithIndicatorDemo({
+    required this.facts,
+  });
+
   @override
-  State<StatefulWidget> createState() {
-    return _CarouselWithIndicatorState();
-  }
+  State<StatefulWidget> createState() => _CarouselWithIndicatorState(facts:facts);
+
 }
 
 
@@ -289,13 +312,26 @@ class CarouselWithIndicatorDemo extends StatefulWidget {
 //   CarouselController buttonCarouselController = CarouselController();
 class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
   int _current = 0;
+  final List<String?> facts;
+
+  _CarouselWithIndicatorState({
+    required this.facts,
+  });
+
   final CarouselController _controller = CarouselController();
+
+  @override
+  void initState() {
+    super.initState();
+    print('Carousel State');
+    print(facts);
+  }
 
  @override
   Widget build(BuildContext context) => Column(
     children: <Widget>[
       CarouselSlider(
-          items: [1,2,3,4,5].map((i) {
+          items: facts.map((i) {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
@@ -304,7 +340,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
                   decoration: BoxDecoration(
                     color: Colors.amber
                   ),
-                  child: Text('text $i', style: TextStyle(fontSize: 16.0),)
+                  child: Text('$i', style: TextStyle(fontSize: 16.0),)
                 );
               },
             );
@@ -330,7 +366,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
           ),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [1,2,3,4,5].asMap().entries.map((entry) {
+        children: facts.asMap().entries.map((entry) {
             return GestureDetector(
               onTap: () => _controller.animateToPage(entry.key),
               child: Container(

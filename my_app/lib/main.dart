@@ -30,10 +30,12 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
 
   late Fact? fact;
+  var facts = <String?>[];
 
   void getFactAPI() async {
     print('inside Getfact');
     fact = (await ApiService().getFact());
+    facts.add(fact?.statement);
     print('try fact');
     print(fact?.fragment);
     notifyListeners();
@@ -52,6 +54,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
+    var facts = appState.facts;
     print('TEST');
     // print(appState.fact);
     // var currFact;
@@ -74,7 +77,21 @@ class MyHomePage extends StatelessWidget {
                 appState.getFactAPI();
               },
               child: Text('Get Fact'),
-            )
+            ),
+            SizedBox(
+              height: 500,
+              child: ListView(
+                children:[
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                  ),
+                  for (var fact in facts)
+                    ListTile(
+                      title: Text(fact!)
+                    ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

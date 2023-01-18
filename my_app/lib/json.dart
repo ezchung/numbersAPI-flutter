@@ -15,14 +15,14 @@ Welcome welcomeFromJson(String str) => Welcome.fromJson(json.decode(str));
 
 class Welcome {
     Welcome({
-        this.fact,
+        required this.fact,
     });
 
-    Fact? fact;
+    Fact fact;
 
     factory Welcome.fromJson(Map<String, dynamic> json) {
       print("In json");
-      print(Fact.fromJson(json["fact"]).fragment);
+      // print(Fact.fromJson(json["fact"]).fragment);
       return Welcome(
         fact: Fact.fromJson(json["fact"]),
       );
@@ -35,16 +35,16 @@ class Welcome {
 
 class Fact {
     Fact({
-        this.fragment,
-        this.number,
-        this.statement,
-        this.type,
+        required this.fragment,
+        required this.number,
+        required this.statement,
+        required this.type,
     });
 
-    String? fragment;
-    int? number;
-    String? statement;
-    String? type;
+    String fragment;
+    int number;
+    String statement;
+    String type;
 
     factory Fact.fromJson(Map<String, dynamic> json) => Fact(
         fragment: json["fragment"],

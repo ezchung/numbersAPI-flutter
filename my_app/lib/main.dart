@@ -37,7 +37,8 @@ class MyAppState extends ChangeNotifier {
     fact = (await ApiService().getFact());
     facts.add(fact?.statement);
     print('try fact');
-    print(fact?.fragment);
+    // print(fact?.fragment);
+    print(fact);
     notifyListeners();
   }
 
@@ -56,6 +57,8 @@ class MyHomePage extends StatelessWidget {
     var pair = appState.current;
     var facts = appState.facts;
     print('TEST');
+    print('facts');
+    print(facts);
     // print(appState.fact);
     // var currFact;
 

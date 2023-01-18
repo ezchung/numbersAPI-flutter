@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:my_app/api_service.dart';
 import 'package:my_app/json.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 void main() {
   runApp(MyApp());
@@ -72,6 +73,7 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            CarouselDemo(),
             BigCard(pair: pair),
             // Text(currFact.fact!.statement)
             SizedBox(height: 5),
@@ -125,4 +127,52 @@ class BigCard extends StatelessWidget {
       ),
     );
   }
+}
+
+// ################# Carousel ############################
+
+class CarouselDemo extends StatelessWidget {
+  CarouselController buttonCarouselController = CarouselController();
+
+ @override
+  Widget build(BuildContext context) => Column(
+    children: <Widget>[
+      CarouselSlider(
+          items: [1,2,3,4,5].map((i) {
+            return Builder(
+              builder: (BuildContext context) {
+                return Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: EdgeInsets.symmetric(horizontal: 5.0),
+                  decoration: BoxDecoration(
+                    color: Colors.amber
+                  ),
+                  child: Text('text $i', style: TextStyle(fontSize: 16.0),)
+                );
+              },
+            );
+          }).toList(),
+          options: CarouselOptions(
+              height: 400,
+              // aspectRatio: 16/9,
+              viewportFraction: 0.8,
+              initialPage: 0,
+              enableInfiniteScroll: true,
+              reverse: false,
+              autoPlay: true,
+              autoPlayInterval: Duration(seconds: 3),
+              autoPlayAnimationDuration: Duration(milliseconds: 800),
+              autoPlayCurve: Curves.fastOutSlowIn,
+              enlargeCenterPage: true,
+              enlargeFactor: 0.3,
+              scrollDirection: Axis.horizontal,
+          ),
+      ),
+      ElevatedButton(
+        onPressed: () => buttonCarouselController.nextPage(
+            duration: Duration(milliseconds: 300), curve: Curves.linear),
+        child: Text('→'),
+      )
+    ]
+  );
 }

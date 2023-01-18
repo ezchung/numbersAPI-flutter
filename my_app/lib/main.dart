@@ -29,13 +29,13 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
 
-  late Welcome? fact;
+  late Fact? fact;
 
   void getFactAPI() async {
     print('inside Getfact');
     fact = (await ApiService().getFact());
     print('try fact');
-    print(fact);
+    print(fact?.fragment);
     notifyListeners();
   }
 

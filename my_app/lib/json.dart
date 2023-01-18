@@ -4,14 +4,14 @@
 
 import 'dart:convert';
 
-// Welcome welcomeFromJson(String str) => Welcome.fromJson(json.decode(str));
+Welcome welcomeFromJson(String str) => Welcome.fromJson(json.decode(str));
 
-Welcome welcomeFromJson(String jsonString) {
-  final jsonData = json.decode(jsonString);
-  return Welcome.fromJson(jsonData);
-}
+// Welcome welcomeFromJson(String jsonString) {
+//   final jsonData = json.decode(jsonString);
+//   return Welcome.fromJson(jsonData);
+// }
 
-String welcomeToJson(Welcome data) => json.encode(data!.toJson());
+// String welcomeToJson(Welcome data) => json.encode(data!.toJson());
 
 class Welcome {
     Welcome({
@@ -20,13 +20,17 @@ class Welcome {
 
     Fact? fact;
 
-    factory Welcome.fromJson(Map<String, dynamic> json) => Welcome(
+    factory Welcome.fromJson(Map<String, dynamic> json) {
+      print("In json");
+      print(Fact.fromJson(json["fact"]).fragment);
+      return Welcome(
         fact: Fact.fromJson(json["fact"]),
-    );
+      );
+    }
 
-    Map<String, dynamic> toJson() => {
-        "fact": fact!.toJson(),
-    };
+    // Map<String, dynamic> toJson() => {
+    //     "fact": fact!.toJson(),
+    // };
 }
 
 class Fact {

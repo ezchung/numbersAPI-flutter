@@ -5,7 +5,7 @@ import 'package:my_app/constants.dart';
 import 'package:my_app/json.dart';
 
 class ApiService {
-  Future<Welcome?> getFact() async {
+  Future<Fact?> getFact() async {
     try {
       var url = Uri.parse(ApiConstants.baseUrl + ApiConstants.testEndpoint);
       var response = await http.get(url);
@@ -13,9 +13,9 @@ class ApiService {
         print('200 status code');
         print(response.body);
         Welcome fact = welcomeFromJson(response.body);
-        print('fact');
-        print(fact);
-        return fact;
+        print('factory');
+        print(fact.fact?.fragment);
+        return fact.fact;
       }
       print('not 200 status code');
     } catch (e) {

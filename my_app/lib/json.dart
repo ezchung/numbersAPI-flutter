@@ -33,6 +33,7 @@ class Welcome {
     // };
 }
 
+// Math & Trivia
 class Fact {
     Fact({
         this.fragment,
@@ -42,16 +43,34 @@ class Fact {
     });
 
     String? fragment;
-    int? number;
+    String? number;
     String? statement;
     String? type;
 
-    factory Fact.fromJson(Map<String, dynamic> json) => Fact(
-        fragment: json["fragment"],
-        number: json["number"],
-        statement: json["statement"],
-        type: json["type"],
-    );
+    factory Fact.fromJson(Map<String, dynamic> json) {
+      if (json["type"] == "math" || json["type"] == "trivia"){
+        return Fact(
+          fragment: json["fragment"],
+          number: json["number"].toString(),
+          statement: json["statement"],
+          type: json["type"],
+        );
+      } else if (json["type"] == "year"){
+        return Fact(
+          fragment: json["fragment"],
+          number: json["year"].toString(),
+          statement: json["statement"],
+          type: json["type"],
+        );
+      } else {
+        return Fact(
+          fragment: json["fragment"],
+          number: '${json["month"]}/${json["day"]}',
+          statement: json["statement"],
+          type: json["type"],
+        );
+      }
+    }
 
     Map<String, dynamic> toJson() => {
         "fragment": fragment,

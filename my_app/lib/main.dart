@@ -98,7 +98,7 @@ class APIWidget extends StatefulWidget {
 
 class APIWidgetState extends State<APIWidget> {
   late Fact? fact;
-  var facts = <String?>[];
+  var facts = <Fact?>[];
 
   @override
   void initState() {
@@ -111,11 +111,13 @@ class APIWidgetState extends State<APIWidget> {
 
   void getInitFactAPI() async {
     fact = (await ApiService().getFact('/math/5'));
-    facts.add(fact?.statement);
+    facts.add(fact);
     fact = (await ApiService().getFact('/trivia/42'));
-    facts.add(fact?.statement);
+    facts.add(fact);
     fact = (await ApiService().getFact('/years/2019'));
-    facts.add(fact?.statement);
+    facts.add(fact);
+    fact = (await ApiService().getFact('/dates/1/1'));
+    facts.add(fact);
 
     setState(() {
       facts = facts;
@@ -125,7 +127,7 @@ class APIWidgetState extends State<APIWidget> {
   void getFactAPI() async {
     print('inside Getfact');
     fact = (await ApiService().getFact('/trivia/random'));
-    facts.add(fact?.statement);
+    facts.add(fact);
 
     setState(() {
       fact = fact;
@@ -133,7 +135,7 @@ class APIWidgetState extends State<APIWidget> {
     });
     print('try fact');
     // print(fact?.fragment);
-    print(fact?.statement);
+    print(fact);
     print('Is it really a fact?');
   }
 
@@ -160,7 +162,7 @@ class APIWidgetState extends State<APIWidget> {
               ),
               for (var fact in facts)
                 ListTile(
-                  title: Text(fact!)
+                  title: Text(fact!.statement!)
                 ),
             ],
           ),
@@ -296,7 +298,7 @@ class BigCard extends StatelessWidget {
 
 // // ################# Carousel ############################
 class CarouselWithIndicatorDemo extends StatefulWidget {
-  final List<String?> facts;
+  final List<Fact?> facts;
 
   const CarouselWithIndicatorDemo({
     required this.facts,
@@ -312,7 +314,7 @@ class CarouselWithIndicatorDemo extends StatefulWidget {
 //   CarouselController buttonCarouselController = CarouselController();
 class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
   int _current = 0;
-  final List<String?> facts;
+  final List<Fact?> facts;
 
   _CarouselWithIndicatorState({
     required this.facts,
@@ -331,7 +333,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
   Widget build(BuildContext context) => Column(
     children: <Widget>[
       CarouselSlider(
-          items: facts.map((i) {
+          items: facts.map((fact) {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
@@ -340,7 +342,11 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
                   decoration: BoxDecoration(
                     color: Colors.amber
                   ),
-                  child: Text('$i', style: TextStyle(fontSize: 16.0),)
+                  child: Column(children: [
+                    Text('${fact?.type}', style: TextStyle(fontSize: 16.0),),
+                    Text('${fact?.statement}', style: TextStyle(fontSize: 16.0),),
+                    Text('${fact?.number}', style: TextStyle(fontSize: 16.0),)
+                  ])
                 );
               },
             );

@@ -14,7 +14,8 @@ class ApiService {
         print(response.body);
         Welcome fact = welcomeFromJson(response.body);
         print('factory');
-        print(fact.fact?.fragment);
+        print(fact.fact);
+        // print(fact.fact?.fragment);
         return fact.fact;
       }
       print('not 200 status code');

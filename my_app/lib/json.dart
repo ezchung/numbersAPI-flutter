@@ -60,14 +60,14 @@ class Fact {
           fragment: json["fragment"],
           number: json["year"].toString(),
           statement: json["statement"],
-          type: json["type"],
+          type: '${json["type"]}s',
         );
       } else {
         return Fact(
           fragment: json["fragment"],
           number: '${json["month"]}/${json["day"]}',
           statement: json["statement"],
-          type: json["type"],
+          type: '${json["type"]}s',
         );
       }
     }

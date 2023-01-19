@@ -31,20 +31,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-
-  // late Fact? fact;
-  // var facts = <String?>[];
-
-  // void getFactAPI() async {
-  //   print('inside Getfact');
-  //   fact = (await ApiService().getFact());
-  //   facts.add(fact?.statement);
-  //   print('try fact');
-  //   // print(fact?.fragment);
-  //   print(fact);
-  //   notifyListeners();
-  // }
-
   var current = WordPair.random();
 
   void getNext() {
@@ -58,19 +44,6 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
-    // var APIState = APIWidget.of(context);
-
-    // var facts = appState.facts;
-    // print('TEST');
-    // print('facts');
-    // print(facts);
-    // // print(appState.fact);
-    // var currFact;
-
-    // if (appState.fact != null) {
-    //   currfact = appState.fact.fact.statement;
-    // }
-    // var currFact = appState.fact;
 
     return Scaffold(
       body: Center(
@@ -88,10 +61,6 @@ class MyHomePage extends StatelessWidget {
 class APIWidget extends StatefulWidget {
   const APIWidget({super.key});
 
-  // static of(BuildContext context, {bool root = false}) => root
-  //     ? context.findRootAncestorStateOfType<APIWidgetState>()
-  //     : context.findAncestorStateOfType<APIWidgetState>();
-
   @override
   State<APIWidget> createState() => APIWidgetState();
 }
@@ -103,7 +72,6 @@ class APIWidgetState extends State<APIWidget> {
   @override
   void initState() {
     super.initState();
-    print('init state ran');
     getInitFactAPI();
     print('INIT FACTS');
     print(facts);
@@ -125,7 +93,6 @@ class APIWidgetState extends State<APIWidget> {
   }
 
   void getFactAPI() async {
-    print('inside Getfact');
     fact = (await ApiService().getFact('/trivia/random'));
     facts.add(fact);
 
@@ -133,10 +100,6 @@ class APIWidgetState extends State<APIWidget> {
       fact = fact;
       facts = facts;
     });
-    print('try fact');
-    // print(fact?.fragment);
-    print(fact);
-    print('Is it really a fact?');
   }
 
   @override
@@ -145,7 +108,6 @@ class APIWidgetState extends State<APIWidget> {
       mainAxisAlignment: MainAxisAlignment.center ,
       children: [
         CarouselWithIndicatorDemo(facts:facts),
-            // Text(currFact.fact!.statement)
         SizedBox(height: 5),
         ElevatedButton(
               onPressed: () {
@@ -171,105 +133,6 @@ class APIWidgetState extends State<APIWidget> {
     );
   }
 }
-
-// void main() {
-//   runApp(MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ChangeNotifierProvider(
-//       create: (context) => MyAppState(),
-//       child: MaterialApp(
-//         title: 'Namer App',
-//         theme: ThemeData(
-//           useMaterial3: true,
-//           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-//         ),
-//         home: MyHomePage(),
-//       ),
-//     );
-//   }
-// }
-
-// class MyAppState extends ChangeNotifier {
-
-//   late Fact? fact;
-//   var facts = <String?>[];
-
-//   void getFactAPI() async {
-//     print('inside Getfact');
-//     fact = (await ApiService().getFact());
-//     facts.add(fact?.statement);
-//     print('try fact');
-//     // print(fact?.fragment);
-//     print(fact);
-//     notifyListeners();
-//   }
-
-//   var current = WordPair.random();
-
-//   void getNext() {
-//     current = WordPair.random();
-//     notifyListeners();
-//   }
-// }
-
-// class MyHomePage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     var appState = context.watch<MyAppState>();
-//     var pair = appState.current;
-//     var facts = appState.facts;
-//     print('TEST');
-//     print('facts');
-//     print(facts);
-//     // print(appState.fact);
-//     // var currFact;
-
-//     // if (appState.fact != null) {
-//     //   currfact = appState.fact.fact.statement;
-//     // }
-//     // var currFact = appState.fact;
-
-//     return Scaffold(
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             CarouselWithIndicatorDemo(),
-//             BigCard(pair: pair),
-//             // Text(currFact.fact!.statement)
-//             SizedBox(height: 5),
-//             ElevatedButton(
-//               onPressed: () {
-//                 appState.getFactAPI();
-//               },
-//               child: Text('Get Fact'),
-//             ),
-//             SizedBox(
-//               height: 500,
-//               child: ListView(
-//                 children:[
-//                   Padding(
-//                     padding: const EdgeInsets.all(20),
-//                   ),
-//                   for (var fact in facts)
-//                     ListTile(
-//                       title: Text(fact!)
-//                     ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class BigCard extends StatelessWidget {
   const BigCard({
@@ -309,9 +172,6 @@ class CarouselWithIndicatorDemo extends StatefulWidget {
 
 }
 
-
-// class CarouselDemo extends StatelessWidget {
-//   CarouselController buttonCarouselController = CarouselController();
 class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
   int _current = 0;
   final List<Fact?> facts;
@@ -344,8 +204,9 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
                   ),
                   child: Column(children: [
                     Text('${fact?.type}', style: TextStyle(fontSize: 16.0),),
+                    Text('numbersapi.com/${fact?.type}/${fact?.number}', 
+                          style: TextStyle(fontSize: 16.0),),
                     Text('${fact?.statement}', style: TextStyle(fontSize: 16.0),),
-                    Text('${fact?.number}', style: TextStyle(fontSize: 16.0),)
                   ])
                 );
               },
@@ -390,8 +251,8 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
           }).toList(),
       ),
       // ElevatedButton(
-      //   onPressed: () => buttonCarouselController.nextPage(
-      //       duration: Duration(milliseconds: 300), curve: Curves.linear),
+        // onPressed: () => buttonCarouselController.nextPage(
+        //     duration: Duration(milliseconds: 300), curve: Curves.linear),
       //   child: Text('→'),
       // )
     ]

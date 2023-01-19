@@ -68,6 +68,7 @@ class APIWidget extends StatefulWidget {
 class APIWidgetState extends State<APIWidget> {
   late Fact? fact;
   var facts = <Fact?>[];
+  late Fact? numWheelFact;
 
   @override
   void initState() {
@@ -81,6 +82,7 @@ class APIWidgetState extends State<APIWidget> {
     fact = (await ApiService().getFact('/math/5'));
     facts.add(fact);
     fact = (await ApiService().getFact('/trivia/42'));
+    numWheelFact = fact;
     facts.add(fact);
     fact = (await ApiService().getFact('/years/2019'));
     facts.add(fact);
@@ -89,16 +91,15 @@ class APIWidgetState extends State<APIWidget> {
 
     setState(() {
       facts = facts;
+      numWheelFact = numWheelFact;
     });
   }
 
   void getFactAPI() async {
     fact = (await ApiService().getFact('/trivia/random'));
-    facts.add(fact);
 
     setState(() {
-      fact = fact;
-      facts = facts;
+      numWheelFact = fact;
     });
   }
 
@@ -115,21 +116,35 @@ class APIWidgetState extends State<APIWidget> {
               },
               child: Text('Get Fact'),
             ),
-        SizedBox(
-          height: 500,
-          child: ListView(
-            children:[
-              Padding(
-                padding: const EdgeInsets.all(20),
-              ),
-              for (var fact in facts)
-                ListTile(
-                  title: Text(fact!.statement!)
+      
+          SizedBox(
+            height: 150,
+            child:
+            ListWheelScrollView(
+              itemExtent:3,
+              children: [
+                Container(
+                  color: Colors.blue,
+                  child: Center(child: Text('0'))
                 ),
-            ],
-          ),
-        ),
-      ] ,
+                Container(
+                  color: Colors.blue,
+                  child: Center(child: Text('1'))
+                ),
+                Container(
+                  color: Colors.blue,
+                  child: Center(child: Text('2'))
+                )
+              ]
+            )
+          )
+        // Card(
+        //   child:
+        //     Column(
+        //       children: [Text(numWheelFact!.statement!)]
+        //     )
+        // ),
+      ],
     );
   }
 }
@@ -213,7 +228,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
             );
           }).toList(),
           options: CarouselOptions(
-              height: 400,
+              height: 200,
               viewportFraction: 0.8,
               initialPage: 0,
               enableInfiniteScroll: true,

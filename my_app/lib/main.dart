@@ -85,6 +85,16 @@ class APIWidgetState extends State<APIWidget> {
     print(facts);
   }
 
+  void isDate() {
+    if (category == "dates") {
+      var date = int.parse('$thousands$hundreds$tens$ones') % 366;
+      // some number to date conversion
+      // number = conversion;
+    } else {
+      number = '$thousands$hundreds$tens$ones';
+    }
+  }
+
   void getInitFactAPI() async {
     fact = (await ApiService().getFact('/math/5'));
     facts.add(fact);

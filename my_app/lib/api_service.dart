@@ -19,6 +19,7 @@ class ApiService {
         return fact.fact;
       }
       print('not 200 status code');
+      print(response.body);
     } catch (e) {
       log(e.toString());
     }

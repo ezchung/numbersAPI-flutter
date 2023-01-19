@@ -1,4 +1,3 @@
-import 'dart:html';
 
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
@@ -86,7 +85,7 @@ class APIWidgetState extends State<APIWidget> {
     facts.add(fact);
     fact = (await ApiService().getFact('/years/2019'));
     facts.add(fact);
-    fact = (await ApiService().getFact('/dates/1/1'));
+    fact = (await ApiService().getFact('/dates/4/20'));
     facts.add(fact);
 
     setState(() {
@@ -116,9 +115,9 @@ class APIWidgetState extends State<APIWidget> {
               },
               child: Text('Get Fact'),
             ),
-      
+
           SizedBox(
-            height: 150,
+            height: 100,
             child:
             ListWheelScrollView(
               itemExtent:3,
@@ -219,7 +218,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
                   ),
                   child: Column(children: [
                     Text('${fact?.type}', style: TextStyle(fontSize: 16.0),),
-                    Text('numbersapi.com/${fact?.type}/${fact?.number}', 
+                    Text('numbersapi.com/${fact?.type}/${fact?.number}',
                           style: TextStyle(fontSize: 16.0),),
                     Text('${fact?.statement}', style: TextStyle(fontSize: 16.0),),
                   ])

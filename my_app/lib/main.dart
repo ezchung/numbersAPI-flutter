@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:my_app/api_service.dart';
 import 'package:my_app/json.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'wheel_num.dart';
 
 void main() {
   runApp(MyApp());
@@ -115,28 +116,84 @@ class APIWidgetState extends State<APIWidget> {
               },
               child: Text('Get Fact'),
             ),
-
-          SizedBox(
+          
+          Container(
             height: 100,
             child:
-            ListWheelScrollView(
-              itemExtent:3,
-              children: [
-                Container(
-                  color: Colors.blue,
-                  child: Center(child: Text('0'))
-                ),
-                Container(
-                  color: Colors.blue,
-                  child: Center(child: Text('1'))
-                ),
-                Container(
-                  color: Colors.blue,
-                  child: Center(child: Text('2'))
-                )
-              ]
-            )
-          )
+              Row(
+                mainAxisAlignment:MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 30,
+                    child:
+                      ListWheelScrollView.useDelegate(
+                        itemExtent:45,
+                        perspective: 0.005,
+                        diameterRatio: 1.2,
+                        physics: FixedExtentScrollPhysics(),
+                        childDelegate: 
+                          ListWheelChildLoopingListDelegate(
+                            children: List<Widget>.generate(
+                              10, (index) => WheelNum(nums:index),
+                            
+                          )
+                        )
+                      )
+                  ),
+                  Container(
+                    width: 30,
+                    child:
+                      ListWheelScrollView.useDelegate(
+                        itemExtent:45,
+                        perspective: 0.005,
+                        diameterRatio: 1.2,
+                        physics: FixedExtentScrollPhysics(),
+                        childDelegate: 
+                          ListWheelChildLoopingListDelegate(
+                            children: List<Widget>.generate(
+                              10, (index) => WheelNum(nums:index),
+                            
+                          )
+                        )
+                      )
+                  ),
+                  Container(
+                    width: 30,
+                    child:
+                      ListWheelScrollView.useDelegate(
+                        itemExtent:45,
+                        perspective: 0.005,
+                        diameterRatio: 1.2,
+                        physics: FixedExtentScrollPhysics(),
+                        childDelegate: 
+                          ListWheelChildLoopingListDelegate(
+                            children: List<Widget>.generate(
+                              10, (index) => WheelNum(nums:index),
+                            
+                          )
+                        )
+                      )
+                  ),
+                  Container(
+                    width: 30,
+                    child:
+                      ListWheelScrollView.useDelegate(
+                        itemExtent:45,
+                        perspective: 0.005,
+                        diameterRatio: 1.2,
+                        physics: FixedExtentScrollPhysics(),
+                        childDelegate: 
+                          ListWheelChildLoopingListDelegate(
+                            children: List<Widget>.generate(
+                              10, (index) => WheelNum(nums:index),
+                            
+                          )
+                        )
+                      )
+                  ),
+                ]
+              )
+          ) //Container
         // Card(
         //   child:
         //     Column(

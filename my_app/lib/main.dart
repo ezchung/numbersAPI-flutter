@@ -69,6 +69,13 @@ class APIWidgetState extends State<APIWidget> {
   late Fact? fact;
   var facts = <Fact?>[];
   late Fact? numWheelFact;
+  var thousands = 0;
+  var hundreds = 0;
+  var tens = 0;
+  var ones = 0;
+  var category = 'math';
+  var number = '0';
+
 
   @override
   void initState() {
@@ -95,8 +102,8 @@ class APIWidgetState extends State<APIWidget> {
     });
   }
 
-  void getFactAPI() async {
-    fact = (await ApiService().getFact('/trivia/random'));
+  void getFactAPI(endpoint) async {
+    fact = (await ApiService().getFact(endpoint));
 
     setState(() {
       numWheelFact = fact;
@@ -109,10 +116,49 @@ class APIWidgetState extends State<APIWidget> {
       mainAxisAlignment: MainAxisAlignment.center ,
       children: [
         CarouselWithIndicatorDemo(facts:facts),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    category = "math";
+                  });
+                },
+                child: Text("Math"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    category = "trivia";
+                  });
+                },
+                child: Text("Trivia"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    category = "years";
+                  });
+                },
+                child: Text("Year"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    category = "dates";
+                  });
+                },
+                child: Text("Date"),
+              ),
+            ],
+          ),
+        ),
         SizedBox(height: 5),
-
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(10.0),
             child: Container(
               height: 100,
               child:
@@ -127,9 +173,32 @@ class APIWidgetState extends State<APIWidget> {
                           perspective: 0.005,
                           diameterRatio: 1.2,
                           physics: FixedExtentScrollPhysics(),
-                          // onSelectedItemChanged: (ind) {
-                          //   print('$ind I`m printing');
-                          // },
+                          onSelectedItemChanged: (ind) {
+                            setState(() {
+                              thousands = ind;
+                            });
+                          },
+                          childDelegate:
+                            ListWheelChildLoopingListDelegate(
+                              children: List<Widget>.generate(
+                                10, (index) => WheelNum(nums:index),
+                            )
+                          )
+                        )
+                    ),
+                    Container(
+                      width: 30,
+                      child:
+                        ListWheelScrollView.useDelegate(
+                          itemExtent:45,
+                          perspective: 0.005,
+                          diameterRatio: 1.2,
+                          physics: FixedExtentScrollPhysics(),
+                          onSelectedItemChanged: (ind) {
+                            setState(() {
+                              hundreds = ind;
+                            });
+                          },
                           childDelegate:
                             ListWheelChildLoopingListDelegate(
                               children: List<Widget>.generate(
@@ -147,6 +216,11 @@ class APIWidgetState extends State<APIWidget> {
                           perspective: 0.005,
                           diameterRatio: 1.2,
                           physics: FixedExtentScrollPhysics(),
+                          onSelectedItemChanged: (ind) {
+                            setState(() {
+                              tens = ind;
+                            });
+                          },
                           childDelegate:
                             ListWheelChildLoopingListDelegate(
                               children: List<Widget>.generate(
@@ -164,23 +238,11 @@ class APIWidgetState extends State<APIWidget> {
                           perspective: 0.005,
                           diameterRatio: 1.2,
                           physics: FixedExtentScrollPhysics(),
-                          childDelegate:
-                            ListWheelChildLoopingListDelegate(
-                              children: List<Widget>.generate(
-                                10, (index) => WheelNum(nums:index),
-
-                            )
-                          )
-                        )
-                    ),
-                    Container(
-                      width: 30,
-                      child:
-                        ListWheelScrollView.useDelegate(
-                          itemExtent:45,
-                          perspective: 0.005,
-                          diameterRatio: 1.2,
-                          physics: FixedExtentScrollPhysics(),
+                          onSelectedItemChanged: (ind) {
+                            setState(() {
+                              ones = ind;
+                            });
+                          },
                           childDelegate:
                             ListWheelChildLoopingListDelegate(
                               children: List<Widget>.generate(
@@ -194,12 +256,17 @@ class APIWidgetState extends State<APIWidget> {
                 )
             ),
           ),
+          Text(
+            'numbersapi.com/${category}/'
+            + '$thousands$hundreds$tens$ones'.replaceFirst(new RegExp(r'^0+'), '')
+          ),
           ElevatedButton(
             onPressed: () {
-              getFactAPI();
+              getFactAPI('/${category}/$thousands$hundreds$tens$ones');
             },
             child: Text('Get Fact'),
-          ), //Container
+          ),
+          Text('${numWheelFact?.statement}'), //Container
       ],
     );
   }

@@ -110,96 +110,93 @@ class APIWidgetState extends State<APIWidget> {
       children: [
         CarouselWithIndicatorDemo(facts:facts),
         SizedBox(height: 5),
-        ElevatedButton(
-              onPressed: () {
-                getFactAPI();
-              },
-              child: Text('Get Fact'),
+
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Container(
+              height: 100,
+              child:
+                Row(
+                  mainAxisAlignment:MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 30,
+                      child:
+                        ListWheelScrollView.useDelegate(
+                          itemExtent:45,
+                          perspective: 0.005,
+                          diameterRatio: 1.2,
+                          physics: FixedExtentScrollPhysics(),
+                          childDelegate:
+                            ListWheelChildLoopingListDelegate(
+                              children: List<Widget>.generate(
+                                10, (index) => WheelNum(nums:index),
+
+                            )
+                          )
+                        )
+                    ),
+                    Container(
+                      width: 30,
+                      child:
+                        ListWheelScrollView.useDelegate(
+                          itemExtent:45,
+                          perspective: 0.005,
+                          diameterRatio: 1.2,
+                          physics: FixedExtentScrollPhysics(),
+                          childDelegate:
+                            ListWheelChildLoopingListDelegate(
+                              children: List<Widget>.generate(
+                                10, (index) => WheelNum(nums:index),
+
+                            )
+                          )
+                        )
+                    ),
+                    Container(
+                      width: 30,
+                      child:
+                        ListWheelScrollView.useDelegate(
+                          itemExtent:45,
+                          perspective: 0.005,
+                          diameterRatio: 1.2,
+                          physics: FixedExtentScrollPhysics(),
+                          childDelegate:
+                            ListWheelChildLoopingListDelegate(
+                              children: List<Widget>.generate(
+                                10, (index) => WheelNum(nums:index),
+
+                            )
+                          )
+                        )
+                    ),
+                    Container(
+                      width: 30,
+                      child:
+                        ListWheelScrollView.useDelegate(
+                          itemExtent:45,
+                          perspective: 0.005,
+                          diameterRatio: 1.2,
+                          physics: FixedExtentScrollPhysics(),
+                          childDelegate:
+                            ListWheelChildLoopingListDelegate(
+                              children: List<Widget>.generate(
+                                10, (index) => WheelNum(nums:index),
+
+                            )
+                          )
+                        )
+                    ),
+                  ]
+                )
             ),
-          
-          Container(
-            height: 100,
-            child:
-              Row(
-                mainAxisAlignment:MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 30,
-                    child:
-                      ListWheelScrollView.useDelegate(
-                        itemExtent:45,
-                        perspective: 0.005,
-                        diameterRatio: 1.2,
-                        physics: FixedExtentScrollPhysics(),
-                        childDelegate: 
-                          ListWheelChildLoopingListDelegate(
-                            children: List<Widget>.generate(
-                              10, (index) => WheelNum(nums:index),
-                            
-                          )
-                        )
-                      )
-                  ),
-                  Container(
-                    width: 30,
-                    child:
-                      ListWheelScrollView.useDelegate(
-                        itemExtent:45,
-                        perspective: 0.005,
-                        diameterRatio: 1.2,
-                        physics: FixedExtentScrollPhysics(),
-                        childDelegate: 
-                          ListWheelChildLoopingListDelegate(
-                            children: List<Widget>.generate(
-                              10, (index) => WheelNum(nums:index),
-                            
-                          )
-                        )
-                      )
-                  ),
-                  Container(
-                    width: 30,
-                    child:
-                      ListWheelScrollView.useDelegate(
-                        itemExtent:45,
-                        perspective: 0.005,
-                        diameterRatio: 1.2,
-                        physics: FixedExtentScrollPhysics(),
-                        childDelegate: 
-                          ListWheelChildLoopingListDelegate(
-                            children: List<Widget>.generate(
-                              10, (index) => WheelNum(nums:index),
-                            
-                          )
-                        )
-                      )
-                  ),
-                  Container(
-                    width: 30,
-                    child:
-                      ListWheelScrollView.useDelegate(
-                        itemExtent:45,
-                        perspective: 0.005,
-                        diameterRatio: 1.2,
-                        physics: FixedExtentScrollPhysics(),
-                        childDelegate: 
-                          ListWheelChildLoopingListDelegate(
-                            children: List<Widget>.generate(
-                              10, (index) => WheelNum(nums:index),
-                            
-                          )
-                        )
-                      )
-                  ),
-                ]
-              )
-          ) //Container
-        // Card(
-        //   child:
-        //     Column(
-        //       children: [Text(numWheelFact!.statement!)]
-        //     )
-        // ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              getFactAPI();
+            },
+            child: Text('Get Fact'),
+          ), //Container
       ],
     );
   }
@@ -321,11 +318,6 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
             );
           }).toList(),
       ),
-      // ElevatedButton(
-        // onPressed: () => buttonCarouselController.nextPage(
-        //     duration: Duration(milliseconds: 300), curve: Curves.linear),
-      //   child: Text('→'),
-      // )
     ]
   );
 }

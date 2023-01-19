@@ -14,9 +14,14 @@ class Utils() {
             306: 11,
             336: 12,
         }
+    late num;
 
     if (dayOfYear == 0) {
       num == 366;
+    } else {
+      num == dayOfYear;
     }
+
+    
   }
 }

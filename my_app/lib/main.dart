@@ -127,6 +127,9 @@ class APIWidgetState extends State<APIWidget> {
                           perspective: 0.005,
                           diameterRatio: 1.2,
                           physics: FixedExtentScrollPhysics(),
+                          // onSelectedItemChanged: (ind) {
+                          //   print('$ind I`m printing');
+                          // },
                           childDelegate:
                             ListWheelChildLoopingListDelegate(
                               children: List<Widget>.generate(

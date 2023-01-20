@@ -6,13 +6,6 @@ import 'dart:convert';
 
 Welcome welcomeFromJson(String str) => Welcome.fromJson(json.decode(str));
 
-// Welcome welcomeFromJson(String jsonString) {
-//   final jsonData = json.decode(jsonString);
-//   return Welcome.fromJson(jsonData);
-// }
-
-// String welcomeToJson(Welcome data) => json.encode(data!.toJson());
-
 class Welcome {
     Welcome({
         required this.fact,
@@ -23,14 +16,20 @@ class Welcome {
     factory Welcome.fromJson(Map<String, dynamic> json) {
       print("In json");
       // print(Fact.fromJson(json["fact"]).fragment);
+      if(json.containsKey("error")){
+        return Welcome(
+          fact: Fact.fromJson(json["error"]),
+        );
+      }
+      print("In fact");
       return Welcome(
-        fact: Fact.fromJson(json["fact"]),
+          fact: Fact.fromJson(json["fact"]),
       );
+      // return Welcome(
+      //   fact: Fact.fromJson(json["fact"]),
+      // );
     }
 
-    // Map<String, dynamic> toJson() => {
-    //     "fact": fact!.toJson(),
-    // };
 }
 
 // Math & Trivia
@@ -48,6 +47,11 @@ class Fact {
     String? type;
 
     factory Fact.fromJson(Map<String, dynamic> json) {
+      if(json.containsKey("message")){
+        return Fact(
+          statement: json["message"]
+        );
+      }
       if (json["type"] == "math" || json["type"] == "trivia"){
         return Fact(
           fragment: json["fragment"],
@@ -79,3 +83,41 @@ class Fact {
         "type": type,
     };
 }
+
+
+// ErrorHandler errorHandlerFromJson(String str) => ErrorHandler.fromJson(json.decode(str));
+
+// // String errorHandlerToJson(ErrorHandler data) => json.encode(data.toJson());
+
+// class ErrorHandler {
+//     ErrorHandler({
+//         required this.error,
+//     });
+
+//     Error? error;
+
+//     factory ErrorHandler.fromJson(Map<String, dynamic> json) => ErrorHandler(
+//         error: Error.fromJson(json["error"]),
+//     );
+
+// }
+
+// class Error {
+//     Error({
+//         required this.message,
+//         required this.status,
+//     });
+
+//     String message;
+//     int status;
+
+//     factory Error.fromJson(Map<String, dynamic> json) => Error(
+//         message: json["message"],
+//         status: json["status"],
+//     );
+
+//     Map<String, dynamic> toJson() => {
+//         "message": message,
+//         "status": status,
+//     };
+// }

@@ -15,11 +15,13 @@ class ApiService {
         Welcome fact = welcomeFromJson(response.body);
         print('factory');
         print(fact.fact);
-        // print(fact.fact?.fragment);
         return fact.fact;
       }
       print('not 200 status code');
       print(response.body);
+      Welcome fact = welcomeFromJson(response.body);
+
+      return fact.fact;
     } catch (e) {
       log(e.toString());
     }

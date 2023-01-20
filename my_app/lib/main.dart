@@ -119,7 +119,8 @@ class APIWidgetState extends State<APIWidget> {
 
   void getFactAPI(endpoint) async {
     fact = (await ApiService().getFact(endpoint));
-
+    print("getFactAPI#######################");
+    print(fact);
     setState(() {
       numWheelFact = fact;
     });

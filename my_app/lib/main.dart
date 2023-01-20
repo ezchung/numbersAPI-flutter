@@ -6,6 +6,7 @@ import 'package:my_app/api_service.dart';
 import 'package:my_app/json.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'wheel_num.dart';
+import 'utils.dart';
 
 void main() {
   runApp(MyApp());
@@ -87,12 +88,16 @@ class APIWidgetState extends State<APIWidget> {
 
   void isDate() {
     if (category == "dates") {
-      var date = int.parse('$thousands$hundreds$tens$ones') % 366;
-      // some number to date conversion
-      // number = conversion;
+      var dayOfYear = int.parse('$thousands$hundreds$tens$ones') % 366;
+      number = Utils().dateFromDayOfYear(dayOfYear);
     } else {
-      number = '$thousands$hundreds$tens$ones';
+      number = '$thousands$hundreds$tens$ones'.replaceFirst(new RegExp(r'^0+'), '');
+      if (number == "") number = '0';
     }
+
+    setState(() {
+      number = number;
+    });
   }
 
   void getInitFactAPI() async {
@@ -136,6 +141,7 @@ class APIWidgetState extends State<APIWidget> {
                   setState(() {
                     category = "math";
                   });
+                  isDate();
                 },
                 child: Text("Math"),
               ),
@@ -144,6 +150,7 @@ class APIWidgetState extends State<APIWidget> {
                   setState(() {
                     category = "trivia";
                   });
+                  isDate();
                 },
                 child: Text("Trivia"),
               ),
@@ -152,6 +159,7 @@ class APIWidgetState extends State<APIWidget> {
                   setState(() {
                     category = "years";
                   });
+                  isDate();
                 },
                 child: Text("Year"),
               ),
@@ -160,6 +168,7 @@ class APIWidgetState extends State<APIWidget> {
                   setState(() {
                     category = "dates";
                   });
+                  isDate();
                 },
                 child: Text("Date"),
               ),
@@ -187,6 +196,7 @@ class APIWidgetState extends State<APIWidget> {
                             setState(() {
                               thousands = ind;
                             });
+                            isDate();
                           },
                           childDelegate:
                             ListWheelChildLoopingListDelegate(
@@ -208,6 +218,7 @@ class APIWidgetState extends State<APIWidget> {
                             setState(() {
                               hundreds = ind;
                             });
+                            isDate();
                           },
                           childDelegate:
                             ListWheelChildLoopingListDelegate(
@@ -230,6 +241,7 @@ class APIWidgetState extends State<APIWidget> {
                             setState(() {
                               tens = ind;
                             });
+                            isDate();
                           },
                           childDelegate:
                             ListWheelChildLoopingListDelegate(
@@ -252,6 +264,7 @@ class APIWidgetState extends State<APIWidget> {
                             setState(() {
                               ones = ind;
                             });
+                            isDate();
                           },
                           childDelegate:
                             ListWheelChildLoopingListDelegate(
@@ -267,16 +280,29 @@ class APIWidgetState extends State<APIWidget> {
             ),
           ),
           Text(
-            'numbersapi.com/${category}/'
-            + '$thousands$hundreds$tens$ones'.replaceFirst(new RegExp(r'^0+'), '')
+            'numbersapi.com/${category}/${number}'
           ),
-          ElevatedButton(
-            onPressed: () {
-              getFactAPI('/${category}/$thousands$hundreds$tens$ones');
-            },
-            child: Text('Get Fact'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  getFactAPI('/${category}/${number}');
+                },
+                child: Text('Get Fact'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  getFactAPI('/${category}/random');
+                  setState(() {
+                    number = 'random';
+                  });
+                },
+                child: Text('Get Random'),
+              ),
+            ]
           ),
-          Text('${numWheelFact?.statement}'), //Container
+        Text('${numWheelFact?.statement}'), //Container
       ],
     );
   }
